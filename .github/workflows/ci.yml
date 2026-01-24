@@ -1,0 +1,223 @@
+name: Build qtermwidget (PySide6)
+
+on: [push, pull_request]
+
+jobs:
+  build_wheel:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python: [3.13]
+        pyside6: [6.9.0]
+        os: [macos-latest]
+
+    steps:
+      - name: Checkout pyside6-qtermwidget
+        uses: actions/checkout@v4
+        with:
+          path: pyside6-qtermwidget
+          submodules: recursive
+
+      - name: Checkout qtermwidget
+        uses: actions/checkout@v4
+        with:
+          repository: lxqt/qtermwidget
+          ref: master
+          path: qtermwidget
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Setup Qt vars
+        run: |
+          QT_VERSION=$(echo ${{ matrix.pyside6 }} | cut -d. -f-3)
+          QT_BASE_DIR=${GITHUB_WORKSPACE}/Qt
+          echo "QT_VERSION=$QT_VERSION" >> $GITHUB_ENV
+          echo "QT_BASE_DIR=$QT_BASE_DIR" >> $GITHUB_ENV
+
+      - name: Setup Qt compiler vars - Linux
+        if: runner.os == 'Linux'
+        run: |
+          QT6_DIR=$QT_BASE_DIR/$QT_VERSION/gcc_64
+          echo "QT6_DIR=$QT6_DIR" >> $GITHUB_ENV
+
+      - name: Setup Qt compiler vars - macOS
+        if: runner.os == 'macOS'
+        run: |
+          QT6_DIR=$QT_BASE_DIR/$QT_VERSION/macos
+          echo "QT6_DIR=$QT6_DIR" >> $GITHUB_ENV
+
+      - name: Install Qt6 using aqtinstall - Linux
+        if: runner.os == 'Linux'
+        run: |
+          python -m pip install aqtinstall
+          python -m aqt install-qt linux desktop ${{ env.QT_VERSION }} --outputdir ${{ env.QT_BASE_DIR }}
+
+      - name: Install Qt6 using aqtinstall - macOS
+        if: runner.os == 'macOS'
+        run: |
+          python -m pip install aqtinstall
+          python -m aqt install-qt mac desktop ${{ env.QT_VERSION }} --outputdir ${{ env.QT_BASE_DIR }}
+
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake python3-dev libgl1-mesa-dev \
+            libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 \
+            libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 \
+            libxcb-xinerama0 libxcb-xfixes0 \
+            clang llvm libclang-dev
+
+      - name: Install system dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install cmake llvm
+
+      - name: Install PySide6 and Shiboken6
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            PySide6==${{ matrix.pyside6 }} \
+            shiboken6==${{ matrix.pyside6 }} \
+            shiboken6_generator==${{ matrix.pyside6 }}
+
+      - name: Debug Shiboken / PySide include paths
+        run: python pyside6-qtermwidget/utils/find_libs.py
+
+      - name: Build and install lxqt-build-tools
+        run: |
+          export PATH=${{ env.QT6_DIR }}/bin:$PATH
+          git clone https://github.com/lxqt/lxqt-build-tools.git
+          cd lxqt-build-tools
+          mkdir build && cd build
+          cmake .. \
+            -DCMAKE_PREFIX_PATH=${{ env.QT6_DIR }} \
+            -DCMAKE_INSTALL_PREFIX=/usr/local
+          cmake --build .
+          sudo cmake --install .
+          cd ../..
+
+      - name: Build qtermwidget C++ library
+        run: |
+          export PATH=${{ env.QT6_DIR }}/bin:$PATH
+          cd qtermwidget
+          mkdir build && cd build
+          cmake .. \
+            -DCMAKE_PREFIX_PATH=${{ env.QT6_DIR }} \
+            -DCMAKE_INSTALL_PREFIX=$PWD/install \
+            -DCMAKE_INSTALL_RPATH='$ORIGIN'
+          cmake --build .
+          cmake --install .
+
+      - name: Generate Python bindings with Shiboken6
+        run: |
+          export PATH=${{ env.QT6_DIR }}/bin:$PATH
+          export CLANG_INSTALL_DIR=/usr
+
+          PYSIDE_TYPESYSTEM=$(python -c "from pathlib import Path; import PySide6; print(Path(PySide6.__file__).parent / 'typesystems')")
+
+          QTERMWIDGET_INSTALL=$PWD/qtermwidget/build/install
+          INCLUDE_PATHS="${QTERMWIDGET_INSTALL}/include:${QTERMWIDGET_INSTALL}/include/qtermwidget6"
+          INCLUDE_PATHS="${INCLUDE_PATHS}:${{ env.QT6_DIR }}/include"
+          INCLUDE_PATHS="${INCLUDE_PATHS}:${{ env.QT6_DIR }}/include/QtCore"
+          INCLUDE_PATHS="${INCLUDE_PATHS}:${{ env.QT6_DIR }}/include/QtGui"
+          INCLUDE_PATHS="${INCLUDE_PATHS}:${{ env.QT6_DIR }}/include/QtWidgets"
+
+          # On macOS, we also need to include framework headers
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            INCLUDE_PATHS="${INCLUDE_PATHS}:${{ env.QT6_DIR }}/lib"
+            INCLUDE_PATHS="${INCLUDE_PATHS}:${{ env.QT6_DIR }}/lib/QtCore.framework/Headers"
+            INCLUDE_PATHS="${INCLUDE_PATHS}:${{ env.QT6_DIR }}/lib/QtGui.framework/Headers"
+            INCLUDE_PATHS="${INCLUDE_PATHS}:${{ env.QT6_DIR }}/lib/QtWidgets.framework/Headers"
+          fi
+
+          cd pyside6-qtermwidget/src
+          mkdir -p ../../build_bindings
+
+          SHIBOKEN_FLAGS=(
+            --generator-set=shiboken
+            --enable-parent-ctor-heuristic
+            --enable-pyside-extensions
+            --enable-return-value-heuristic
+            --use-isnull-as-nb_nonzero
+            --avoid-protected-hack
+          )
+
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            SHIBOKEN_FLAGS+=(
+              --framework-include-paths=${{ env.QT6_DIR }}/lib
+            )
+          fi
+
+          shiboken6 \
+              "${SHIBOKEN_FLAGS[@]}" \
+              --output-directory=../build_bindings \
+              --include-paths=${INCLUDE_PATHS} \
+              --typesystem-paths=${PYSIDE_TYPESYSTEM} \
+              qtermwidget_bindings.h \
+              typesystem_qtermwidget.xml
+
+      - name: Upload the qtermwidget library as an artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: qtermwidget-build
+          path: |
+            pyside6-qtermwidget/build_bindings/qtermwidget
+            qtermwidget/build/install
+
+      - name: Build Python extension
+        run: |
+          ls -l ${GITHUB_WORKSPACE}
+          mkdir -p build_ext && cd build_ext
+          cmake ${GITHUB_WORKSPACE}/pyside6-qtermwidget -DCMAKE_PREFIX_PATH=${{ env.QT6_DIR }}
+          cmake --build .
+          cp _qtermwidget.so ../qtermwidget/
+
+      - name: Bundle libqtermwidget into Python package
+        run: |
+          mkdir -p pyside6-qtermwidget/qtermwidget
+
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+              cp qtermwidget/build/install/lib/libqtermwidget6.dylib \
+                  pyside6-qtermwidget/qtermwidget/libqtermwidget6.dylib
+          else
+              cp qtermwidget/build/install/lib/libqtermwidget6.so \
+                  pyside6-qtermwidget/qtermwidget/libqtermwidget6.so
+          fi
+
+      - name: Clean build artifacts
+        run: |
+          cd pyside6-qtermwidget
+          rm -rf build dist *.egg-info
+
+      - name: Print qtermwidget directory contents for debugging
+        run: |
+          echo "Contents of qtermwidget directory:"
+          ls -l pyside6-qtermwidget/qtermwidget
+
+      - name: Build Python wheel
+        run: |
+          ls -l 
+          export Qt6_DIR=${{ env.QT6_DIR }}
+          export QTERMWIDGET_DIR=$PWD/qtermwidget/build/install
+
+          cd pyside6-qtermwidget
+          python -m pip install --upgrade build setuptools wheel scikit-build-core>=0.9
+          python -m build --wheel --no-isolation
+
+      - name: Test wheel
+        run: |
+          cd pyside6-qtermwidget
+          python -m pip install dist/*.whl
+          python -c "import qtermwidget; print(qtermwidget.__doc__)"
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: qtermwidget-wheel-${{ matrix.python }}-pyside6-${{ matrix.pyside6 }}-${{ matrix.os }}
+          path: pyside6-qtermwidget/dist/*.whl
