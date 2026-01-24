@@ -1,0 +1,1 @@
+## PySide 6 Bindings for QTermWidget
