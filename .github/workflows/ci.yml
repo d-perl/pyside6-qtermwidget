@@ -69,6 +69,9 @@ jobs:
             python -m aqt install-qt mac desktop ${{ matrix.version }} --outputdir ${{ github.workspace }}/Qt
             brew install cmake llvm
 
+          CIBW_ARCHS_MACOS: arm64
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS:
+
       - name: Upload wheels
         uses: actions/upload-artifact@v5
         with:
