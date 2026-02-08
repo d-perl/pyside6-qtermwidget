@@ -40,17 +40,14 @@ jobs:
           output-dir: ./wheelhouse
           config-file: ./pyside6-qtermwidget/pyproject.toml
         env:
-          # container-visible env vars
-          QT_VERSION: ${{ matrix.version }}
-          QT_BASE_DIR: ${{ github.workspace }}/Qt
           CIBW_BUILD: cp313-*
           CIBW_SKIP: "*musllinux*"
           CIBW_BUILD_VERBOSITY: 1
 
           # Linux specific
           CIBW_ENVIRONMENT_LINUX: >
-            Qt6_DIR=${{ env.QT_BASE_DIR }}/${{ matrix.version }}/gcc_64
-            QT6_INSTALL_DIR=${{ env.QT_BASE_DIR }}/${{ matrix.version }}/gcc_64
+            Qt6_DIR=${{ github.workspace }}/Qt/${{ matrix.version }}/gcc_64
+            QT6_INSTALL_DIR=${{ github.workspace }}/Qt/${{ matrix.version }}/gcc_64
 
           CIBW_BEFORE_ALL_LINUX: |
             python -m pip install --upgrade pip
@@ -62,8 +59,8 @@ jobs:
 
           # macOS specific
           CIBW_ENVIRONMENT_MACOS: |
-            Qt6_DIR=${{ env.QT_BASE_DIR }}/${{ matrix.version }}/macos
-            QT6_INSTALL_DIR=${{ env.QT_BASE_DIR }}/${{ matrix.version }}/macos
+            Qt6_DIR=${{ github.workspace }}/Qt/${{ matrix.version }}/macos
+            QT6_INSTALL_DIR=${{ github.workspace }}/Qt/${{ matrix.version }}/macos
             PATH=/opt/homebrew/opt/llvm/bin:$PATH
             CC=/opt/homebrew/opt/llvm/bin/clang
             CXX=/opt/homebrew/opt/llvm/bin/clang++
