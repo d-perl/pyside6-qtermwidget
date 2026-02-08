@@ -48,6 +48,8 @@ jobs:
           CIBW_ENVIRONMENT_LINUX: >
             Qt6_DIR=${{ github.workspace }}/Qt/${{ matrix.version }}/gcc_64
             QT6_INSTALL_DIR=${{ github.workspace }}/Qt/${{ matrix.version }}/gcc_64
+            CMAKE_PREFIX_PATH=${{ github.workspace }}/Qt/${{ matrix.version }}/gcc_64/lib/cmake
+            LD_LIBRARY_PATH=${{ github.workspace }}/Qt/${{ matrix.version }}/gcc_64/lib:$LD_LIBRARY_PATH
 
           CIBW_BEFORE_BUILD_LINUX: |
             python -m pip install --upgrade pip
