@@ -55,21 +55,7 @@ jobs:
             python -m aqt install-qt linux desktop ${QT_VERSION} --outputdir ${QT_BASE_DIR}
 
             # Install system dependencies
-            yum install -y \
-              cmake \
-              mesa-libGL-devel \
-              libxkbcommon-x11-devel \
-              libxcb-devel \
-              libxcb-icccm-devel \
-              libxcb-image-devel \
-              libxcb-keysyms-devel \
-              libxcb-randr-devel \
-              libxcb-render-util-devel \
-              libxcb-xinerama-devel \
-              libxcb-xfixes-devel \
-              clang \
-              llvm \
-              libclang-devel
+            yum install -y mesa-libGL libxslt llvm clang clang-devel libxkbcommon-devel cmake
 
           CIBW_BEFORE_ALL_MACOS: |
             python -m pip install aqtinstall
