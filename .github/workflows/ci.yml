@@ -86,19 +86,6 @@ jobs:
             shiboken6==${{ matrix.pyside6 }} \
             shiboken6_generator==${{ matrix.pyside6 }}
 
-      - name: Build and install lxqt-build-tools
-        run: |
-          export PATH=${{ env.QT6_DIR }}/bin:$PATH
-          git clone https://github.com/lxqt/lxqt-build-tools.git
-          cd lxqt-build-tools
-          mkdir build && cd build
-          cmake .. \
-            -DCMAKE_PREFIX_PATH=${{ env.QT6_DIR }} \
-            -DCMAKE_INSTALL_PREFIX=/usr/local
-          cmake --build .
-          sudo cmake --install .
-          cd ../..
-
       - name: Build Python wheel
         run: |
           export Qt6_DIR=${{ env.QT6_DIR }}
