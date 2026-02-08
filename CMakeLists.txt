@@ -4,6 +4,8 @@ project(qtermwidget_python_bindings)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+include(ExternalProject)
+
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 # Qt6 installation directory (pass via -DQT6_INSTALL_DIR=... or set QT6_INSTALL_DIR environment variable)
@@ -26,8 +28,23 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 set(EXT_QTERMWIDGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/qtermwidget")
 set(EXT_LXQT_BUILD_TOOLS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/lxqt-build-tools")
 
-# QTermWidget install
-set(QTERMWIDGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../qtermwidget/build/install")
+# QTermWidget source and install directories
+set(QTERMWIDGET_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../qtermwidget")
+set(QTERMWIDGET_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/qtermwidget-build")
+set(QTERMWIDGET_DIR "${QTERMWIDGET_BUILD_DIR}/install")
+
+# Build qtermwidget as an external project
+ExternalProject_Add(qtermwidget_external
+    SOURCE_DIR ${QTERMWIDGET_SOURCE_DIR}
+    BINARY_DIR ${QTERMWIDGET_BUILD_DIR}
+    CMAKE_ARGS
+        -DCMAKE_PREFIX_PATH=${QT6_INSTALL_DIR}
+        -DCMAKE_INSTALL_PREFIX=${QTERMWIDGET_DIR}
+        -DCMAKE_INSTALL_RPATH=$ORIGIN
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    BUILD_COMMAND ${CMAKE_COMMAND} --build ${QTERMWIDGET_BUILD_DIR}
+    INSTALL_COMMAND ${CMAKE_COMMAND} --install ${QTERMWIDGET_BUILD_DIR}
+)
 
 # Shiboken
 execute_process(
@@ -143,6 +160,7 @@ add_custom_command(
         ${CMAKE_CURRENT_SOURCE_DIR}/src/typesystem_qtermwidget.xml
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src
     DEPENDS
+        qtermwidget_external
         ${CMAKE_CURRENT_SOURCE_DIR}/src/qtermwidget_bindings.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/typesystem_qtermwidget.xml
     COMMENT "Generating Python bindings with Shiboken6"
@@ -157,6 +175,9 @@ set(SHIBOKEN_SOURCES
 
 # Build the Python extension 
 add_library(_qtermwidget MODULE ${SHIBOKEN_SOURCES})
+
+# Ensure qtermwidget is built before the Python extension
+add_dependencies(_qtermwidget qtermwidget_external)
 
 # Includes 
 target_include_directories(_qtermwidget PRIVATE

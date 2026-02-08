@@ -99,23 +99,10 @@ jobs:
           sudo cmake --install .
           cd ../..
 
-      - name: Build qtermwidget C++ library
-        run: |
-          export PATH=${{ env.QT6_DIR }}/bin:$PATH
-          cd qtermwidget
-          mkdir build && cd build
-          cmake .. \
-            -DCMAKE_PREFIX_PATH=${{ env.QT6_DIR }} \
-            -DCMAKE_INSTALL_PREFIX=$PWD/install \
-            -DCMAKE_INSTALL_RPATH='$ORIGIN'
-          cmake --build .
-          cmake --install .
-
       - name: Build Python wheel
         run: |
           export Qt6_DIR=${{ env.QT6_DIR }}
           export QT6_INSTALL_DIR=${{ env.QT6_DIR }}
-          export QTERMWIDGET_DIR=$PWD/qtermwidget/build/install
 
           cd pyside6-qtermwidget
           python -m pip install --upgrade build setuptools wheel scikit-build-core>=0.9
