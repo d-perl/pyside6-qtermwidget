@@ -224,4 +224,13 @@ set_target_properties(_qtermwidget PROPERTIES
     PREFIX ""
     OUTPUT_NAME "_qtermwidget"
     INSTALL_RPATH "$ORIGIN"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget"
+)
+
+# Copy libqtermwidget6 library to qtermwidget package directory
+add_custom_command(TARGET _qtermwidget POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<IF:$<PLATFORM_ID:Darwin>,${QTERMWIDGET_DIR}/lib/libqtermwidget6.dylib,${QTERMWIDGET_DIR}/lib/libqtermwidget6.so>
+        ${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget/$<IF:$<PLATFORM_ID:Darwin>,libqtermwidget6.dylib,libqtermwidget6.so>
+    COMMENT "Copying libqtermwidget6 library to Python package directory"
 )

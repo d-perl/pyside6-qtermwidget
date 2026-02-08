@@ -86,9 +86,6 @@ jobs:
             shiboken6==${{ matrix.pyside6 }} \
             shiboken6_generator==${{ matrix.pyside6 }}
 
-      - name: Debug Shiboken / PySide include paths
-        run: python pyside6-qtermwidget/utils/find_libs.py
-
       - name: Build and install lxqt-build-tools
         run: |
           export PATH=${{ env.QT6_DIR }}/bin:$PATH
@@ -114,39 +111,8 @@ jobs:
           cmake --build .
           cmake --install .
 
-      - name: Build Python extension
-        run: |
-          ls -l ${GITHUB_WORKSPACE}
-          mkdir -p build_ext && cd build_ext
-          cmake ${GITHUB_WORKSPACE}/pyside6-qtermwidget -DQT6_INSTALL_DIR=${{ env.QT6_DIR }}
-          cmake --build .
-          cp _qtermwidget.so ../qtermwidget/
-
-      - name: Bundle libqtermwidget into Python package
-        run: |
-          mkdir -p pyside6-qtermwidget/qtermwidget
-
-          if [[ "$RUNNER_OS" == "macOS" ]]; then
-              cp qtermwidget/build/install/lib/libqtermwidget6.dylib \
-                  pyside6-qtermwidget/qtermwidget/libqtermwidget6.dylib
-          else
-              cp qtermwidget/build/install/lib/libqtermwidget6.so \
-                  pyside6-qtermwidget/qtermwidget/libqtermwidget6.so
-          fi
-
-      - name: Clean build artifacts
-        run: |
-          cd pyside6-qtermwidget
-          rm -rf build dist *.egg-info
-
-      - name: Print qtermwidget directory contents for debugging
-        run: |
-          echo "Contents of qtermwidget directory:"
-          ls -l pyside6-qtermwidget/qtermwidget
-
       - name: Build Python wheel
         run: |
-          ls -l 
           export Qt6_DIR=${{ env.QT6_DIR }}
           export QT6_INSTALL_DIR=${{ env.QT6_DIR }}
           export QTERMWIDGET_DIR=$PWD/qtermwidget/build/install
