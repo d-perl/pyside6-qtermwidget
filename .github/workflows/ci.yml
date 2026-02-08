@@ -10,7 +10,6 @@ jobs:
       matrix:
         os: [macos-latest]
         version: ["6.9.0"]
-        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout pyside6-qtermwidget
