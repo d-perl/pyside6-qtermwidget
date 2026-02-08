@@ -9,7 +9,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        version: ["6.8.3", "6.9.0"]
+        version: ["6.9.0"]
 
     steps:
       - name: Checkout pyside6-qtermwidget
@@ -63,22 +63,17 @@ jobs:
             brew install cmake llvm
 
           # ---------- Qt discovery ----------
-          CIBW_ENVIRONMENT_LINUX: >
+          CIBW_ENVIRONMENT_LINUX: |
             Qt6_DIR=${QT_BASE_DIR}/${QT_VERSION}/gcc_64
             QT6_INSTALL_DIR=${QT_BASE_DIR}/${QT_VERSION}/gcc_64
 
-          CIBW_ENVIRONMENT_MACOS: >
+          CIBW_ENVIRONMENT_MACOS: |
             Qt6_DIR=${QT_BASE_DIR}/${QT_VERSION}/macos
             QT6_INSTALL_DIR=${QT_BASE_DIR}/${QT_VERSION}/macos
 
           # ---------- Python deps ----------
-          CIBW_BEFORE_BUILD: >
-            pip install
-            PySide6==${PYSIDE_VERSION}
-            shiboken6==${PYSIDE_VERSION}
-            shiboken6_generator==${PYSIDE_VERSION}
-            scikit-build-core>=0.9
-            build
+          CIBW_BEFORE_BUILD: |
+            pip install PySide6==${PYSIDE_VERSION} shiboken6==${PYSIDE_VERSION} shiboken6_generator==${PYSIDE_VERSION} scikit-build-core>=0.9 build
 
           CIBW_TEST_COMMAND: >
             python -c "import qtermwidget; print(qtermwidget.__doc__)"
