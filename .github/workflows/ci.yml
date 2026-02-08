@@ -76,4 +76,4 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: qtermwidget-${{ matrix.os }}-qt${{ matrix.version }}
-          path: pyside6-qtermwidget/dist/*.whl
+          path: wheelhouse/*.whl
