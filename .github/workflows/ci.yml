@@ -52,6 +52,7 @@ jobs:
             LD_LIBRARY_PATH=${{ github.workspace }}/Qt/${{ matrix.version }}/gcc_64/lib:$LD_LIBRARY_PATH
 
           CIBW_BEFORE_BUILD_LINUX: |
+            apt-get install libclang-dev
             python -m pip install --upgrade pip
             python -m pip install aqtinstall
             python -m aqt install-qt linux desktop ${{ matrix.version }} --outputdir ${{ github.workspace }}/Qt
