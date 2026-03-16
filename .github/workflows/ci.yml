@@ -52,11 +52,11 @@ jobs:
             LD_LIBRARY_PATH=${{ github.workspace }}/Qt/${{ matrix.version }}/gcc_64/lib:$LD_LIBRARY_PATH
 
           CIBW_BEFORE_BUILD_LINUX: |
-            apt-get install libclang-dev
+            dnf install -y mesa-libGL libxslt libxkbcommon-devel libclang-devel
             python -m pip install --upgrade pip
             python -m pip install aqtinstall
             python -m aqt install-qt linux desktop ${{ matrix.version }} --outputdir ${{ github.workspace }}/Qt
-            yum install -y mesa-libGL libxslt libxkbcommon-devel
+            
 
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_34
 
