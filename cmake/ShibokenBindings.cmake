@@ -215,7 +215,7 @@ endif()
 # RPATH so it finds libqtermwidget6.so in the same folder
 set_target_properties(_qtermwidget PROPERTIES
     PREFIX ""
-    OUTPUT_NAME "qtermwidget_pyside6"
+    OUTPUT_NAME "_qtermwidget"
     INSTALL_RPATH "$ORIGIN"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget"
 )
@@ -229,7 +229,8 @@ add_custom_command(TARGET _qtermwidget POST_BUILD
 )
 
 
-# add_custom_command(TARGET _qtermwidget POST_BUILD
-#     COMMAND sleep 10000
-#     COMMENT "wait for inspection"
-# )
+
+add_custom_command(TARGET _qtermwidget POST_BUILD
+    COMMAND sleep 10000
+    COMMENT "wait for inspection"
+)

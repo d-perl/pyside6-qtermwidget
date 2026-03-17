@@ -28,6 +28,11 @@ build.verbose = true
 wheel.packages = ["qtermwidget"]
 
 [tool.cibuildwheel]
+build = [
+    "cp311-manylinux_x86_64",
+    "cp312-manylinux_x86_64",
+    "cp313-manylinux_x86_64",
+]
 build-verbosity = 1
 container-engine = "podman"
 linux.environment = { http_proxy = "http://host.containers.internal:3128", Qt6_DIR = "/host/tmp/Qt/6.9.0/gcc_64", QT6_INSTALL_DIR = "/host/tmp/Qt/6.9.0/gcc_64", CMAKE_PREFIX_PATH = "/host/tmp/Qt/6.9.0/gcc_64/lib/cmake", LD_LIBRARY_PATH = "/host/tmp/Qt/6.9.0/gcc_64/lib:$LD_LIBRARY_PATH", CC = "clang", CXX = "clang++" }
