@@ -230,7 +230,7 @@ add_custom_command(TARGET _qtermwidget POST_BUILD
 
 
 
-add_custom_command(TARGET _qtermwidget POST_BUILD
-    COMMAND sleep 10000
-    COMMENT "wait for inspection"
-)
+# add_custom_command(TARGET _qtermwidget POST_BUILD
+#     COMMAND sleep 10000
+#     COMMENT "wait for inspection"
+# )
