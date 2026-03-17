@@ -14,7 +14,7 @@ name = "pyside6-qtermwidget"
 version = "0.1.0"
 description = "Python bindings for QTermWidget using Shiboken6"
 readme = "readme.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = { text = "GPL-2.0-or-later" }
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -25,3 +25,13 @@ classifiers = [
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"
 build.verbose = true
+
+[tool.cibuildwheel]
+container-engine = "podman"
+linux.environment = { http_proxy = "http://host.containers.internal:3128", Qt6_DIR = "/host/tmp/Qt/6.9.0/gcc_64", QT6_INSTALL_DIR = "/host/tmp/Qt/6.9.0/gcc_64", CMAKE_PREFIX_PATH = "/host/tmp/Qt/6.9.0/gcc_64/lib/cmake", LD_LIBRARY_PATH = "/host/tmp/Qt/6.9.0/gcc_64/lib:$LD_LIBRARY_PATH", CC = "clang", CXX = "clang++" }
+before-build = [
+    "dnf install -y libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
+    "python -m pip install --upgrade pip",
+    #"python -m pip install aqtinstall",
+    #"python -m aqt install-qt linux desktop 6.9.0 --outputdir /tmp/Qt",
+]

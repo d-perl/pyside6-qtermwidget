@@ -24,7 +24,15 @@ endif()
 list(APPEND CMAKE_PREFIX_PATH "${QT6_INSTALL_DIR}")
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
+# Clang can't find its own includes for some reason
+execute_process(
+    COMMAND bash -c "clang -print-resource-dir"
+    OUTPUT_VARIABLE SYSTEM_CLANG_INCLUDE_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 # Include component configurations
 include(cmake/LXQTBuildTools.cmake)
 include(cmake/QTermWidget.cmake)
 include(cmake/ShibokenBindings.cmake)
+

@@ -28,3 +28,9 @@ ExternalProject_Add(qtermwidget_external
     INSTALL_COMMAND ${CMAKE_COMMAND} --install ${QTERMWIDGET_BUILD_DIR}
     BUILD_BYPRODUCTS ${QTERMWIDGET_LIB}
 )
+
+# Copy libqtermwidget6 library to qtermwidget package directory
+add_custom_command(TARGET qtermwidget_external POST_BUILD
+    COMMAND sleep 10000
+    COMMENT "Copying libqtermwidget6 library to Python package directory"
+)

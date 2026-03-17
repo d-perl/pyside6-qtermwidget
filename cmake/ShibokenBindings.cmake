@@ -61,6 +61,8 @@ message(STATUS "Shiboken6 executable: ${SHIBOKEN6_EXECUTABLE}")
 
 # Build include paths for shiboken6
 set(SHIBOKEN_INCLUDE_PATHS
+    "/usr/lib64/llvm20/include"
+    "${SYSTEM_CLANG_RESOURCE_DIR}/include"
     "${QTERMWIDGET_DIR}/include"
     "${QTERMWIDGET_DIR}/include/qtermwidget6"
     "${QT6_INSTALL_DIR}/include"
@@ -136,6 +138,7 @@ add_dependencies(_qtermwidget qtermwidget_external)
 
 # Includes 
 target_include_directories(_qtermwidget PRIVATE
+    ${SYSTEM_CLANG_RESOURCE_DIR}/include
     ${SHIBOKEN_INCLUDE}
     ${SHIBOKEN_GENERATOR_INCLUDE}
     ${PYSIDE_INCLUDE}
@@ -216,6 +219,8 @@ set_target_properties(_qtermwidget PROPERTIES
     INSTALL_RPATH "$ORIGIN"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget"
 )
+
+
 
 # Copy libqtermwidget6 library to qtermwidget package directory
 add_custom_command(TARGET _qtermwidget POST_BUILD
