@@ -11,7 +11,7 @@ set(QTERMWIDGET_DIR "${QTERMWIDGET_BUILD_DIR}/install")
 if(APPLE)
     set(QTERMWIDGET_LIB "${QTERMWIDGET_DIR}/lib/libqtermwidget6.dylib")
 else()
-    set(QTERMWIDGET_LIB "${QTERMWIDGET_DIR}/lib/libqtermwidget6.so")
+    set(QTERMWIDGET_LIB "${QTERMWIDGET_DIR}/lib64/libqtermwidget6.so")
 endif()
 
 # Build qtermwidget as an external project
@@ -29,8 +29,7 @@ ExternalProject_Add(qtermwidget_external
     BUILD_BYPRODUCTS ${QTERMWIDGET_LIB}
 )
 
-# Copy libqtermwidget6 library to qtermwidget package directory
 add_custom_command(TARGET qtermwidget_external POST_BUILD
-    COMMAND sleep 10000
-    COMMENT "Copying libqtermwidget6 library to Python package directory"
+    COMMAND tree -L 3 ${QTERMWIDGET_BUILD_DIR}
+    COMMENT "display build results"
 )

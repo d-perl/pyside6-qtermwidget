@@ -27,7 +27,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 # Clang can't find its own includes for some reason
 execute_process(
     COMMAND bash -c "clang -print-resource-dir"
-    OUTPUT_VARIABLE SYSTEM_CLANG_INCLUDE_DIR
+    OUTPUT_VARIABLE SYSTEM_CLANG_RESOURCE_DIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 

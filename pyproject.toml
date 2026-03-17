@@ -25,13 +25,14 @@ classifiers = [
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"
 build.verbose = true
+wheel.packages = ["qtermwidget"]
 
 [tool.cibuildwheel]
+build-verbosity = 1
 container-engine = "podman"
 linux.environment = { http_proxy = "http://host.containers.internal:3128", Qt6_DIR = "/host/tmp/Qt/6.9.0/gcc_64", QT6_INSTALL_DIR = "/host/tmp/Qt/6.9.0/gcc_64", CMAKE_PREFIX_PATH = "/host/tmp/Qt/6.9.0/gcc_64/lib/cmake", LD_LIBRARY_PATH = "/host/tmp/Qt/6.9.0/gcc_64/lib:$LD_LIBRARY_PATH", CC = "clang", CXX = "clang++" }
 before-build = [
-    "dnf install -y libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
+    "dnf install -y tree libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
     "python -m pip install --upgrade pip",
-    #"python -m pip install aqtinstall",
-    #"python -m aqt install-qt linux desktop 6.9.0 --outputdir /tmp/Qt",
+
 ]
