@@ -39,7 +39,6 @@ build-verbosity = 1
 container-engine = "podman"
 linux.before-build = [
     "dnf install -y tree libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
-    "python -m pip install --upgrade pip",
 ]
 macos.before-build = [
     "brew install cmake llvm"
@@ -49,9 +48,6 @@ macos.before-build = [
 QT6_INSTALL_DIR="/host/${ CIBUILDWHEEL_WORKSPACE }/Qt/6.9.0/gcc_64"
 CMAKE_PREFIX_PATH="/host/${ CIBUILDWHEEL_WORKSPACE }/Qt/6.9.0/gcc_64/lib/cmake"
 LD_LIBRARY_PATH = "/host/${ CIBUILDWHEEL_WORKSPACE }/Qt/6.9.0/gcc_64/lib:$LD_LIBRARY_PATH"
-
-CMAKE_PREFIX_PATH = "/host/tmp/Qt/6.9.0/gcc_64/lib/cmake"
-LD_LIBRARY_PATH = "/host/tmp/Qt/6.9.0/gcc_64/lib:$LD_LIBRARY_PATH"
 CC = "clang"
 CXX = "clang++" 
 
