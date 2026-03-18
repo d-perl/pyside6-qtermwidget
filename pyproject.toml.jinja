@@ -29,6 +29,7 @@ build.verbose = true
 wheel.packages = ["qtermwidget"]
 
 [tool.cibuildwheel]
+environment-pass = ["CIBUILDWHEEL_WORKSPACE"]
 manylinux-x86_64-image = "manylinux_2_34"
 macos.archs = ["arm64"]
 build = [
