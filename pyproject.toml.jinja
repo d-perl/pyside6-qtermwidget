@@ -21,6 +21,7 @@ classifiers = [
     "License :: OSI Approved :: GPLv2 or later (GPLv2+)",
     "Operating System :: OS Independent",
 ]
+dependencies = ["PySide6=={{ QT_VERSION }}"]
 
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"
@@ -38,8 +39,8 @@ build = [
 build-verbosity = 1
 container-engine = "podman"
 linux.before-build = [
+    "env",
     "dnf install -y tree libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
-    "python -m pip install --upgrade pip",
 ]
 macos.before-build = [
     "brew install cmake llvm"
