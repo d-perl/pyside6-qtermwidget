@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
@@ -18,8 +21,8 @@ jobs:
           python-version: "3.x"
 
       - name: Cache Qt Lib
-        id: cache-qt-lib
-        uses: actions/cache@v5
+        id: cache-qt-lib-restore
+        uses: actions/cache/restore@v5
         with:
           path: ${{ github.workspace }}/Qt
           key: qt-${{ matrix.qt_version }}-lib
@@ -30,6 +33,13 @@ jobs:
           python -m pip install aqtinstall
           aqt install-qt linux desktop ${{ matrix.qt_version }} --outputdir ${{ github.workspace }}/Qt
           aqt install-qt mac desktop ${{ matrix.qt_version }} --outputdir ${{ github.workspace }}/Qt
+      
+      - name: Save Qt lib cache
+        id: cache-qt-lib-save
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ github.workspace }}/Qt
+          key: ${{ steps.cache-qt-lib-restore.outputs.cache-primary-key }}
 
       - name: Checkout pyside6-qtermwidget
         uses: actions/checkout@v4
