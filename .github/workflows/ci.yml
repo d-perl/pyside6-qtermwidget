@@ -54,13 +54,17 @@ jobs:
           echo "USING pyproject.toml:"
           cat pyproject.toml
 
+      - name: Diagnostics
+        run: |
+          echo "PWD: $(pwd)"
+          tree -L 2 ../
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.3.1
         env:
           CIBUILDWHEEL_WORKSPACE: ${{ github.workspace }}
         with:
           output-dir: ./wheelhouse
-          # config-file: ./pyside6-qtermwidget/pyproject.toml
 
       - name: Upload wheels
         uses: actions/upload-artifact@v5
