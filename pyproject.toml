@@ -38,18 +38,21 @@ build = [
 build-verbosity = 1
 container-engine = "podman"
 linux.before-build = [
+    "env",
     "dnf install -y tree libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
 ]
-macos.before-build = [
-    "brew install cmake llvm"
-]
+macos.before-build = ["brew install cmake llvm"]
+environment-pass = ["CIBUILDWHEEL_WORKSPACE"]
 
 [tool.cibuildwheel.linux.environment]
-QT6_INSTALL_DIR="/host/${ CIBUILDWHEEL_WORKSPACE }/Qt/6.9.0/gcc_64"
-CMAKE_PREFIX_PATH="/host/${ CIBUILDWHEEL_WORKSPACE }/Qt/6.9.0/gcc_64/lib/cmake"
-LD_LIBRARY_PATH = "/host/${ CIBUILDWHEEL_WORKSPACE }/Qt/6.9.0/gcc_64/lib:$LD_LIBRARY_PATH"
+http_proxy = "host.containers.internal:3128"
+Qt6_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/6.9.0/gcc_64"
+QT6_INSTALL_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/6.9.0/gcc_64"
+CMAKE_PREFIX_PATH = "/host$CIBUILDWHEEL_WORKSPACE/Qt/6.9.0/gcc_64/lib/cmake"
+LD_LIBRARY_PATH = "/host$CIBUILDWHEEL_WORKSPACE/Qt/6.9.0/gcc_64/lib:$LD_LIBRARY_PATH"
 CC = "clang"
-CXX = "clang++" 
+CXX = "clang++"
 
 [tool.cibuildwheel.macos.environment]
-QT6_INSTALL_DIR="${ CIBUILDWHEEL_WORKSPACE }/Qt/6.9.0/macos"
+Qt6_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/6.9.0/macos"
+QT6_INSTALL_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/6.9.0/macos"
