@@ -1,0 +1,56 @@
+[build-system]
+requires = [
+    "scikit-build-core>=0.10",
+    "wheel",
+    "setuptools",
+    "PySide6=={{ QT_VERSION }}",
+    "shiboken6=={{ QT_VERSION }}",
+    "shiboken6-generator=={{ QT_VERSION }}",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pyside6-qtermwidget"
+version = "0.1.0"
+description = "Python bindings for QTermWidget using Shiboken6"
+readme = "readme.md"
+requires-python = ">=3.11"
+license = { text = "GPL-2.0-or-later" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GPLv2 or later (GPLv2+)",
+    "Operating System :: OS Independent",
+]
+
+[tool.scikit-build]
+build-dir = "build/{wheel_tag}"
+build.verbose = true
+wheel.packages = ["qtermwidget"]
+
+[tool.cibuildwheel]
+manylinux-x86_64-image = "manylinux_2_34"
+macos.archs = ["arm64"]
+build = [
+    #"cp311-manylinux_x86_64",
+    "cp312-manylinux_x86_64",
+    #"cp313-manylinux_x86_64",
+]
+build-verbosity = 1
+container-engine = "podman"
+linux.before-build = [
+    "dnf install -y tree libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
+    "python -m pip install --upgrade pip",
+]
+macos.before-build = [
+    "brew install cmake llvm"
+]
+
+[tool.cibuildwheel.linux.environment]
+QT6_INSTALL_DIR="/host/${ CIBUILDWHEEL_WORKSPACE }/Qt/{{ QT_VERSION }}/gcc_64"
+CMAKE_PREFIX_PATH="/host/${ CIBUILDWHEEL_WORKSPACE }/Qt/{{ QT_VERSION }}/gcc_64/lib/cmake"
+LD_LIBRARY_PATH = "/host/${ CIBUILDWHEEL_WORKSPACE }/Qt/{{ QT_VERSION }}/gcc_64/lib:$LD_LIBRARY_PATH"
+CC = "clang"
+CXX = "clang++" 
+
+[tool.cibuildwheel.macos.environment]
+QT6_INSTALL_DIR="${ CIBUILDWHEEL_WORKSPACE }/Qt/{{ QT_VERSION }}/macos"
