@@ -21,7 +21,7 @@ jobs:
         id: cache-qt-lib
         uses: actions/cache@v5
         with:
-          path: Qt
+          path: ${{ github.workspace }}/Qt
           key: qt-${{ matrix.qt_version }}-lib
 
       - name: Install Qt Lib
@@ -34,11 +34,12 @@ jobs:
       - name: Checkout pyside6-qtermwidget
         uses: actions/checkout@v4
         with:
-          path: pyside6-qtermwidget
           submodules: recursive
       
       - name: Generate pyproject.toml
         run: |
+          pwd
+          tree -L 2 ${{ github.workspace }}
           python -m pip install jinja2-cli
           jinja2 pyproject.toml.jinja -D QT_VERSION="${{ matrix.qt_version }}" -o pyproject.toml
 

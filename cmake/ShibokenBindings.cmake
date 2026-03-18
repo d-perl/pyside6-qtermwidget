@@ -197,6 +197,16 @@ if (APPLE)
         ${PYSIDE_DYLIB_PATH}
     )
 else ()
+    file(GLOB SHIBOKEN_LIB
+        "${SHIBOKEN_PYTHON_DIR}/libshiboken6*.so"
+    )
+    file(GLOB PYSIDE_LIB
+        "${PYSIDE_DIR}/libpyside6*.so"
+    )
+    target_link_options(_qtermwidget PRIVATE
+        -Wl,--no-as-needed
+        -Wl,--no-gc-sections
+    )
     # Create imported target for qtermwidget library
     add_library(qtermwidget6 SHARED IMPORTED)
     set_target_properties(qtermwidget6 PROPERTIES
@@ -209,6 +219,9 @@ else ()
         Qt6::Gui
         Qt6::Widgets
         qtermwidget6
+        Python3::Module
+        ${SHIBOKEN_LIB}
+        ${PYSIDE_LIB}
     )
 endif()
 
@@ -227,8 +240,6 @@ add_custom_command(TARGET _qtermwidget POST_BUILD
         ${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget/$<IF:$<PLATFORM_ID:Darwin>,libqtermwidget6.dylib,libqtermwidget6.so>
     COMMENT "Copying libqtermwidget6 library to Python package directory"
 )
-
-
 
 # add_custom_command(TARGET _qtermwidget POST_BUILD
 #     COMMAND sleep 10000
