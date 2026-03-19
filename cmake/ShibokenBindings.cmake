@@ -151,34 +151,31 @@ target_include_directories(_qtermwidget PRIVATE
     ${QTERMWIDGET_DIR}/include/qtermwidget6
 )
 
+# Get the path to the Shiboken and PySide libs
+execute_process(
+    COMMAND python3 -c "from pathlib import Path; import shiboken6; print(Path(shiboken6.__file__).parent)"
+    OUTPUT_VARIABLE SHIBOKEN_PYTHON_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND python3 -c "from pathlib import Path; import PySide6; print(Path(PySide6.__file__).parent)"
+    OUTPUT_VARIABLE PYSIDE_PYTHON_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
 # Link libraries
 if (APPLE)
-    # Get the path to the Shiboken and PySide dylibs for macOS
-    execute_process(
-        COMMAND python3 -c "from pathlib import Path; import shiboken6; print(Path(shiboken6.__file__).parent)"
-        OUTPUT_VARIABLE SHIBOKEN_DYLIB_PATH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-
     # Find the correct dylib for shiboken6 (e.g., libshiboken6.abi3.6.9.dylib)
-    file(GLOB SHIBOKEN_DYLIBS "${SHIBOKEN_DYLIB_PATH}/libshiboken6*.dylib")
+    file(GLOB SHIBOKEN_DYLIBS "${SHIBOKEN_PYTHON_DIR}/libshiboken6*.dylib")
     list(GET SHIBOKEN_DYLIBS 0 SHIBOKEN_DYLIB_PATH)  # Take the first match
 
-    message(STATUS "Using Shiboken dylib: ${SHIBOKEN_DYLIB_PATH}")
-
-    # Get the path to the PySide dylib for macOS
-    execute_process(
-        COMMAND python3 -c "from pathlib import Path; import PySide6; print(Path(PySide6.__file__).parent)"
-        OUTPUT_VARIABLE PYSIDE_DYLIB_PATH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
+    message(STATUS "Using Shiboken dylib: ${SHIBOKEN_DYLIBS}")
 
     # Find the correct dylib for PySide6 (e.g., libpyside6.abi3.6.9.dylib)
-    file(GLOB PYSIDE_DYLIBS "${PYSIDE_DYLIB_PATH}/libpyside6*.dylib")
+    file(GLOB PYSIDE_DYLIBS "${PYSIDE_PYTHON_DIR}/libpyside6*.dylib")
     list(GET PYSIDE_DYLIBS 0 PYSIDE_DYLIB_PATH)  # Take the first match
 
-    message(STATUS "Using PySide dylib: ${PYSIDE_DYLIB_PATH}")
+    message(STATUS "Using PySide dylib: ${PYSIDE_DYLIBS}")
 
     # Create imported target for qtermwidget library
     add_library(qtermwidget6 SHARED IMPORTED)
@@ -197,11 +194,11 @@ if (APPLE)
         ${PYSIDE_DYLIB_PATH}
     )
 else ()
-    file(GLOB SHIBOKEN_LIB
-        "${SHIBOKEN_PYTHON_DIR}/libshiboken6*.so"
+    file(GLOB SHIBOKEN_LIBS
+        "${SHIBOKEN_PYTHON_DIR}/libshiboken6*.so*"
     )
-    file(GLOB PYSIDE_LIB
-        "${PYSIDE_DIR}/libpyside6*.so"
+    file(GLOB PYSIDE_LIBS
+        "${PYSIDE_PYTHON_DIR}/libpyside6*.so*"
     )
     target_link_options(_qtermwidget PRIVATE
         -Wl,--no-as-needed
@@ -214,14 +211,21 @@ else ()
     )
     add_dependencies(qtermwidget6 qtermwidget_external)
 
+    execute_process(
+        COMMAND echo "Linking to pyside libs: ${PYSIDE_LIBS} in ${PYSIDE_PYTHON_DIR}"
+    )
+    execute_process(
+        COMMAND echo "Linking to shiboken libs: ${SHIBOKEN_LIBS} in ${SHIBOKEN_PYTHON_DIR}"
+    )
+
     target_link_libraries(_qtermwidget
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
         qtermwidget6
         Python3::Module
-        ${SHIBOKEN_LIB}
-        ${PYSIDE_LIB}
+        ${PYSIDE_LIBS}
+        ${SHIBOKEN_LIBS}
     )
 endif()
 
@@ -240,6 +244,7 @@ add_custom_command(TARGET _qtermwidget POST_BUILD
         ${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget/$<IF:$<PLATFORM_ID:Darwin>,libqtermwidget6.dylib,libqtermwidget6.so>
     COMMENT "Copying libqtermwidget6 library to Python package directory"
 )
+
 
 # add_custom_command(TARGET _qtermwidget POST_BUILD
 #     COMMAND sleep 10000

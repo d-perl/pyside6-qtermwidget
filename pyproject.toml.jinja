@@ -37,10 +37,9 @@ build = [
     "cp312-manylinux_x86_64",
     #"cp313-manylinux_x86_64",
 ]
-build-verbosity = 1
+build-verbosity = 3
 container-engine = "podman"
 linux.before-build = [
-    "env",
     "dnf install -y tree libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
 ]
 macos.before-build = [
@@ -48,6 +47,7 @@ macos.before-build = [
 ]
 
 [tool.cibuildwheel.linux.environment]
+SKBUILD_LOGGING_LEVEL="INFO"
 Qt6_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64"
 QT6_INSTALL_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64"
 CMAKE_PREFIX_PATH = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64/lib/cmake"

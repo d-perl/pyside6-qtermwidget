@@ -31,6 +31,8 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 # Include component configurations
 include(cmake/LXQTBuildTools.cmake)
 include(cmake/QTermWidget.cmake)
