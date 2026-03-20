@@ -98,8 +98,8 @@ set(SHIBOKEN_OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build_bindings")
 # Custom command to generate Python bindings with Shiboken6
 add_custom_command(
     OUTPUT
-    ${SHIBOKEN_OUTPUT_DIR}/qtermwidget/qtermwidget_module_wrapper.cpp
-    ${SHIBOKEN_OUTPUT_DIR}/qtermwidget/qtermwidget_wrapper.cpp
+    ${SHIBOKEN_OUTPUT_DIR}/pyside6_qtermwidget/pyside6_qtermwidget_module_wrapper.cpp
+    ${SHIBOKEN_OUTPUT_DIR}/pyside6_qtermwidget/qtermwidget_wrapper.cpp
     COMMAND ${CMAKE_COMMAND} -E make_directory ${SHIBOKEN_OUTPUT_DIR}
     COMMAND ${SHIBOKEN6_EXECUTABLE}
     ${SHIBOKEN_FLAGS}
@@ -119,8 +119,8 @@ add_custom_command(
 
 # Shiboken-generated sources
 set(SHIBOKEN_SOURCES
-    ${SHIBOKEN_OUTPUT_DIR}/qtermwidget/qtermwidget_module_wrapper.cpp
-    ${SHIBOKEN_OUTPUT_DIR}/qtermwidget/qtermwidget_wrapper.cpp
+    ${SHIBOKEN_OUTPUT_DIR}/pyside6_qtermwidget/pyside6_qtermwidget_module_wrapper.cpp
+    ${SHIBOKEN_OUTPUT_DIR}/pyside6_qtermwidget/qtermwidget_wrapper.cpp
 )
 
 # Build the Python extension 
@@ -215,6 +215,10 @@ add_custom_command(TARGET pyside6_qtermwidget POST_BUILD
     ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/lib/$<IF:$<PLATFORM_ID:Darwin>,libqtermwidget6.dylib,libqtermwidget6.so.2>
     COMMENT "Copying libqtermwidget6 library to Python package directory"
 )
+install(CODE
+    "execute_process(COMMAND shiboken6-genpyi ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/pyside6_qtermwidget.so)"
+)
+
 # add_custom_command(TARGET pyside6_qtermwidget POST_BUILD
 #     COMMAND sleep 10000
 #     COMMENT "wait for inspection"
