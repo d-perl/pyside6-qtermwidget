@@ -21,7 +21,7 @@ classifiers = [
     "License :: OSI Approved :: GPLv2 or later (GPLv2+)",
     "Operating System :: OS Independent",
 ]
-dependencies = ["PySide6=={{ QT_VERSION }}"]
+dependencies = ["PySide6=={{ QT_VERSION }}", "shiboken6=={{ QT_VERSION }}"]
 
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"
@@ -46,9 +46,10 @@ linux.before-build = [
 macos.before-build = [
     "brew install cmake llvm"
 ]
+linux.repair-wheel-command = ""
 
 [tool.cibuildwheel.linux.environment]
-SKBUILD_LOGGING_LEVEL="INFO"
+SKBUILD_LOGGING_LEVEL = "INFO"
 Qt6_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64"
 QT6_INSTALL_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64"
 CMAKE_PREFIX_PATH = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64/lib/cmake"

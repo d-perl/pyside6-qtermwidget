@@ -201,8 +201,7 @@ else ()
         "${PYSIDE_PYTHON_DIR}/libpyside6*.so*"
     )
     target_link_options(_qtermwidget PRIVATE
-        -Wl,--no-as-needed
-        -Wl,--no-gc-sections
+        -Wl,-rpath=\$ORIGIN/lib:\$ORIGIN/../PySide6/:\$ORIGIN/../PySide6/Qt/lib:\$ORIGIN/../shiboken6
     )
     # Create imported target for qtermwidget library
     add_library(qtermwidget6 SHARED IMPORTED)
@@ -233,18 +232,24 @@ endif()
 set_target_properties(_qtermwidget PROPERTIES
     PREFIX ""
     OUTPUT_NAME "_qtermwidget"
-    INSTALL_RPATH "$ORIGIN"
+    INSTALL_RPATH "\$ORIGIN/lib:\$ORIGIN/../PySide6/:\$ORIGIN/../PySide6/Qt/lib:\$ORIGIN/../shiboken6"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget"
 )
+
 
 # Copy libqtermwidget6 library to qtermwidget package directory
 add_custom_command(TARGET _qtermwidget POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<IF:$<PLATFORM_ID:Darwin>,${QTERMWIDGET_DIR}/lib/libqtermwidget6.dylib,${QTERMWIDGET_DIR}/lib64/libqtermwidget6.so>
-        ${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget/$<IF:$<PLATFORM_ID:Darwin>,libqtermwidget6.dylib,libqtermwidget6.so>
+        $<IF:$<PLATFORM_ID:Darwin>,${QTERMWIDGET_DIR}/lib/libqtermwidget6.dylib,${QTERMWIDGET_DIR}/lib64/libqtermwidget6.so.2>
+        ${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget/$<IF:$<PLATFORM_ID:Darwin>,libqtermwidget6.dylib,libqtermwidget6.so.2>
     COMMENT "Copying libqtermwidget6 library to Python package directory"
 )
-
+add_custom_command(TARGET _qtermwidget POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/__init__.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/qtermwidget/__init__.py
+    COMMENT "Copying python module definition"
+)
 
 # add_custom_command(TARGET _qtermwidget POST_BUILD
 #     COMMAND sleep 10000
