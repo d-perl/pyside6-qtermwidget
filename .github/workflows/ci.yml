@@ -23,22 +23,22 @@ jobs:
         id: cache-qt-lib-restore
         uses: actions/cache/restore@v5
         with:
-          path: ${{ github.workspace }}/Qt
+          path: ${{ github.workspace }}/../Qt
           key: qt-${{ matrix.qt_version }}-lib
 
       - name: Install Qt Lib
         if: steps.cache-qt-lib-restore.outputs.cache-hit != 'true'
         run: |
           python -m pip install aqtinstall
-          aqt install-qt linux desktop ${{ matrix.qt_version }} --outputdir ${{ github.workspace }}/Qt
-          aqt install-qt mac desktop ${{ matrix.qt_version }} --outputdir ${{ github.workspace }}/Qt
+          aqt install-qt linux desktop ${{ matrix.qt_version }} --outputdir ${{ github.workspace }}/../Qt
+          aqt install-qt mac desktop ${{ matrix.qt_version }} --outputdir ${{ github.workspace }}/../Qt
       
       - name: Save Qt lib cache
         if: steps.cache-qt-lib-restore.outputs.cache-hit != 'true'
         id: cache-qt-lib-save
         uses: actions/cache/save@v5
         with:
-          path: ${{ github.workspace }}/Qt
+          path: ${{ github.workspace }}/../Qt
           key: ${{ steps.cache-qt-lib-restore.outputs.cache-primary-key }}
 
       - name: Checkout pyside6-qtermwidget

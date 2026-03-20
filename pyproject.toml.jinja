@@ -26,7 +26,7 @@ dependencies = ["PySide6=={{ QT_VERSION }}", "shiboken6=={{ QT_VERSION }}"]
 [tool.scikit-build]
 build-dir = "build/{wheel_tag}"
 build.verbose = true
-wheel.packages = ["qtermwidget"]
+wheel.packages = ["pyside6_qtermwidget"]
 
 [tool.cibuildwheel]
 environment-pass = ["CIBUILDWHEEL_WORKSPACE"]
