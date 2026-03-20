@@ -213,15 +213,18 @@ target_link_libraries(pyside6_qtermwidget
 install(TARGETS pyside6_qtermwidget
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/
 )
-file(GLOB LIBQTERMWIDGET
-    "${QTERMWIDGET_DIR}/lib/libqtermwidget6*"
-)
-# Copy libqtermwidget6 library to qtermwidget package directory
-add_custom_command(TARGET pyside6_qtermwidget POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${LIBQTERMWIDGET}
-    ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/lib/
-    COMMENT "Copying libqtermwidget6 library to Python package directory"
+# file(GLOB LIBQTERMWIDGET
+#     "${QTERMWIDGET_DIR}/lib/libqtermwidget6.*"
+# )
+# # Copy libqtermwidget6 library to qtermwidget package directory
+# add_custom_command(TARGET pyside6_qtermwidget POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#     ${LIBQTERMWIDGET}
+#     ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/lib/
+#     COMMENT "Copying libqtermwidget6 library to Python package directory"
+# )
+install(FILE ${QTERMWIDGET_LIB}
+    DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/lib/
 )
 install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/__init__.py
