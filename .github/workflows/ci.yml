@@ -61,7 +61,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.3.1
         env:
-          CIBUILDWHEEL_WORKSPACE: ${{ github.workspace }}
+          CIBUILDWHEEL_WORKSPACE: ${{ github.workspace }}/..
         with:
           output-dir: ./wheelhouse
 
