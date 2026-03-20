@@ -47,6 +47,7 @@ macos.before-build = [
     "brew install cmake llvm"
 ]
 linux.repair-wheel-command = ""
+macos.repair-wheel-command = ""
 
 [tool.cibuildwheel.linux.environment]
 Qt6_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64"
@@ -56,6 +57,3 @@ LD_LIBRARY_PATH = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64/lib:$
 CC = "clang"
 CXX = "clang++" 
 
-[tool.cibuildwheel.macos.environment]
-Qt6_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/macos"
-QT6_INSTALL_DIR="/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/macos"
