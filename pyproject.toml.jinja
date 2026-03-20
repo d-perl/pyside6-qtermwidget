@@ -57,5 +57,5 @@ CC = "clang"
 CXX = "clang++" 
 
 [tool.cibuildwheel.macos.environment]
-Qt6_DIR = "/host/$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/macos"
+Qt6_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/macos"
 QT6_INSTALL_DIR="/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/macos"

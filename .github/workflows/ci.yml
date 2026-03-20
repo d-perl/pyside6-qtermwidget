@@ -58,6 +58,8 @@ jobs:
         uses: pypa/cibuildwheel@v3.3.1
         env:
           CIBUILDWHEEL_WORKSPACE: ${{ github.workspace }}
+          CIBW_ENVIRONMENT_MACOS: >
+            CIBUILDWHEEL_WORKSPACE=${{ github.workspace }}
         with:
           output-dir: ./wheelhouse
 
