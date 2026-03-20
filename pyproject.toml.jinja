@@ -49,7 +49,6 @@ macos.before-build = [
 linux.repair-wheel-command = ""
 
 [tool.cibuildwheel.linux.environment]
-SKBUILD_LOGGING_LEVEL = "INFO"
 Qt6_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64"
 QT6_INSTALL_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64"
 CMAKE_PREFIX_PATH = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64/lib/cmake"
