@@ -68,5 +68,5 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v5
         with:
-          name: qtermwidget-qt${{ matrix.version }}
+          name: qtermwidget-qt${{ matrix.qt_version }}
           path: wheelhouse/*.whl
