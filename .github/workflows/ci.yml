@@ -4,13 +4,14 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os.runner }}
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
+        os: [{name: "linux", runner: "ubuntu-latest"}, {name: "macos", runner: "macos-latest"}]
         qt_version: ["6.9.0"]
 
     steps:
@@ -68,5 +69,5 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v5
         with:
-          name: qtermwidget-qt${{ matrix.qt_version }}
+          name: qtermwidget-${{ matrix.os.name }}-qt${{ matrix.qt_version }}
           path: wheelhouse/*.whl
