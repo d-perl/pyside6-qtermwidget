@@ -59,7 +59,8 @@ jobs:
         env:
           CIBUILDWHEEL_WORKSPACE: ${{ github.workspace }}
           CIBW_ENVIRONMENT_MACOS: >
-            CIBUILDWHEEL_WORKSPACE=${{ github.workspace }}
+            Qt6_DIR=${{ github.workspace }}/Qt/{{ QT_VERSION }}/macos"
+            QT6_INSTALL_DIR=${{ github.workspace }}/Qt/{{ QT_VERSION }}/macos"
         with:
           output-dir: ./wheelhouse
 
