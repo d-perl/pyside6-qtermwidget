@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os.runner }}
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.os.runner }}-${{ matrix.qt_version }}
       cancel-in-progress: true
     strategy:
       fail-fast: false
