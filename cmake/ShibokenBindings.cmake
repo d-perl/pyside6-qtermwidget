@@ -35,14 +35,6 @@ message(STATUS "PySide include: ${PYSIDE_INCLUDE}")
 message(STATUS "Build output: ${CMAKE_BINARY_DIR}")
 message(STATUS "qtermwidget include: ${EXT_QTERMWIDGET_DIR}/lib")
 
-# print 'ls' of the qtermwidget lib directory for debugging
-execute_process(
-    COMMAND ls -l ${QTERMWIDGET_DIR}/include/qtermwidget6
-    OUTPUT_VARIABLE QTERMWIDGET_INCLUDE_CONTENTS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-message(STATUS "Contents of qtermwidget include directory:\n${QTERMWIDGET_INCLUDE_CONTENTS}")
-
 # Get PySide6 typesystem path
 execute_process(
     COMMAND python3 -c "from pathlib import Path; import PySide6; print(Path(PySide6.__file__).parent / 'typesystems')"
@@ -213,25 +205,17 @@ target_link_libraries(pyside6_qtermwidget
 install(TARGETS pyside6_qtermwidget
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/
 )
-# file(GLOB LIBQTERMWIDGET
-#     "${QTERMWIDGET_DIR}/lib/libqtermwidget6.*"
-# )
-# # Copy libqtermwidget6 library to qtermwidget package directory
-# add_custom_command(TARGET pyside6_qtermwidget POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#     ${LIBQTERMWIDGET}
-#     ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/lib/
-#     COMMENT "Copying libqtermwidget6 library to Python package directory"
-# )
-install(FILE ${QTERMWIDGET_LIB}
-    DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/lib/
-)
 install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/__init__.py
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/
 )
-
-# add_custom_command(TARGET _qtermwidget POST_BUILD
+add_custom_command(TARGET pyside6_qtermwidget POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<IF:$<PLATFORM_ID:Darwin>,${QTERMWIDGET_DIR}/lib/libqtermwidget6.dylib,${QTERMWIDGET_DIR}/lib64/libqtermwidget6.so>
+    ${CMAKE_CURRENT_SOURCE_DIR}/pyside6_qtermwidget/lib/$<IF:$<PLATFORM_ID:Darwin>,libqtermwidget6.dylib,libqtermwidget6.so>
+    COMMENT "Copying libqtermwidget6 library to Python package directory"
+)
+# add_custom_command(TARGET pyside6_qtermwidget POST_BUILD
 #     COMMAND sleep 10000
 #     COMMENT "wait for inspection"
 # )

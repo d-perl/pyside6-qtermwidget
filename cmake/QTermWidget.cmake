@@ -28,8 +28,3 @@ externalproject_add(qtermwidget_external
     INSTALL_COMMAND ${CMAKE_COMMAND} --install ${QTERMWIDGET_BUILD_DIR}
     BUILD_BYPRODUCTS ${QTERMWIDGET_LIB}
 )
-
-add_custom_command(TARGET qtermwidget_external POST_BUILD
-    COMMAND tree -L 3 ${QTERMWIDGET_BUILD_DIR}
-    COMMENT "display build results"
-)
