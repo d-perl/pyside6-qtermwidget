@@ -161,6 +161,7 @@ if(APPLE)
         PREFIX ""
         OUTPUT_NAME "pyside6_qtermwidget"
         INSTALL_RPATH "@loader_path;@loader_path/lib;@loader_path/../PySide6/;@loader_path/../PySide6/Qt/lib;@loader_path/../shiboken6"
+        INSTALL_NAME_DIR "@rpath"
     )
     set(MACOSX_RPATH TRUE)
     file(GLOB SHIBOKEN_DYLIBS
@@ -174,6 +175,7 @@ else()
         PREFIX ""
         OUTPUT_NAME "pyside6_qtermwidget"
         INSTALL_RPATH "\$ORIGIN:\$ORIGIN/lib:\$ORIGIN/../PySide6/:\$ORIGIN/../PySide6/Qt/lib:\$ORIGIN/../shiboken6"
+        INSTALL_NAME_DIR "\$ORIGIN"
     )
     file(GLOB SHIBOKEN_LIBS
         "${SHIBOKEN_PYTHON_DIR}/libshiboken6*.so*"
@@ -187,7 +189,7 @@ message(STATUS "Using Shiboken lib: ${SHIBOKEN_LIBS}")
 message(STATUS "Using PySide libs: ${PYSIDE_LIBS}")
 
 # Create imported target for qtermwidget library
-add_library(qtermwidget6 SHARED IMPORTED)
+add_library(qtermwidget6 STATIC IMPORTED)
 set_target_properties(qtermwidget6 PROPERTIES
     IMPORTED_LOCATION ${QTERMWIDGET_LIB}
 )
