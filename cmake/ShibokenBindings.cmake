@@ -160,7 +160,7 @@ if(APPLE)
     set_target_properties(pyside6_qtermwidget PROPERTIES
         PREFIX ""
         OUTPUT_NAME "pyside6_qtermwidget"
-        INSTALL_RPATH @loader_path;@loader_path/lib;@loader_path/../PySide6/;@loader_path/../PySide6/Qt/lib;@loader_path/../shiboken6
+        INSTALL_RPATH "@loader_path;@loader_path/lib;@loader_path/../PySide6/;@loader_path/../PySide6/Qt/lib;@loader_path/../shiboken6"
     )
     set(MACOSX_RPATH TRUE)
     file(GLOB SHIBOKEN_DYLIBS
