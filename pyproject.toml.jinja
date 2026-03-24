@@ -43,7 +43,7 @@ linux.before-build = [
     "dnf install -y tree libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
 ]
 macos.before-build = [
-    "brew install cmake llvm tree", "python -m site --user-site"
+    "brew install cmake llvm tree", "python -c \"import sysconfig; print(sysconfig.get_path('purelib'))\""
 ]
 linux.repair-wheel-command = ""
 macos.repair-wheel-command = ""
