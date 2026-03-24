@@ -10,9 +10,13 @@ set(QTERMWIDGET_DIR "${QTERMWIDGET_BUILD_DIR}/install")
 # Determine library extension based on platform
 if(APPLE)
     set(QTERMWIDGET_LIB "${QTERMWIDGET_DIR}/lib/libqtermwidget6.dylib")
+    set(LIBQTW_INSTALL_RPATH "@rpath")
 else()
+    set(LIBQTW_INSTALL_RPATH "\$ORIGIN/lib")
     set(QTERMWIDGET_LIB "${QTERMWIDGET_DIR}/lib64/libqtermwidget6.so")
 endif()
+
+
 
 # Build qtermwidget as an external project
 externalproject_add(qtermwidget_external
@@ -22,7 +26,7 @@ externalproject_add(qtermwidget_external
     CMAKE_ARGS
     -DCMAKE_PREFIX_PATH=${QT6_INSTALL_DIR}
     -DCMAKE_INSTALL_PREFIX=${QTERMWIDGET_DIR}
-    -DCMAKE_INSTALL_RPATH=$ORIGIN
+    -DCMAKE_INSTALL_RPATH=${LIBQTW_INSTALL_RPATH}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     BUILD_COMMAND ${CMAKE_COMMAND} --build ${QTERMWIDGET_BUILD_DIR}
     INSTALL_COMMAND ${CMAKE_COMMAND} --install ${QTERMWIDGET_BUILD_DIR}
