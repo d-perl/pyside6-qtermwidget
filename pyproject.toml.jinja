@@ -31,7 +31,6 @@ wheel.packages = ["pyside6_qtermwidget"]
 [tool.cibuildwheel]
 environment-pass = ["CIBUILDWHEEL_WORKSPACE"]
 manylinux-x86_64-image = "manylinux_2_34"
-macos.archs = ["arm64"]
 build = [
     #"cp311-manylinux_x86_64",
     "cp312-manylinux_x86_64",
