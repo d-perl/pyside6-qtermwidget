@@ -26,10 +26,17 @@ externalproject_add(qtermwidget_external
     CMAKE_ARGS
     -DCMAKE_PREFIX_PATH=${QT6_INSTALL_DIR}
     -DCMAKE_INSTALL_PREFIX=${QTERMWIDGET_DIR}
-    -DCMAKE_BUILD_RPATH=${LIBQTW_INSTALL_RPATH}
-    -DCMAKE_INSTALL_RPATH=${LIBQTW_INSTALL_RPATH}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     BUILD_COMMAND ${CMAKE_COMMAND} --build ${QTERMWIDGET_BUILD_DIR}
     INSTALL_COMMAND ${CMAKE_COMMAND} --install ${QTERMWIDGET_BUILD_DIR}
     BUILD_BYPRODUCTS ${QTERMWIDGET_LIB}
 )
+
+if(APPLE)
+    externalproject_add_step(qtermwidget_external fix_install_name
+        DEPENDEES install
+        COMMAND install_name_tool
+        -id @rpath/libqtermwidget6.2.dylib
+        ${QTERMWIDGET_DIR}/lib/libqtermwidget6.2.dylib
+    )
+endif()

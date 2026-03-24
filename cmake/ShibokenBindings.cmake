@@ -191,7 +191,7 @@ message(STATUS "Using PySide libs: ${PYSIDE_LIBS}")
 # Create imported target for qtermwidget library
 add_library(qtermwidget6 SHARED IMPORTED)
 set_target_properties(qtermwidget6 PROPERTIES
-    IMPORTED_LOCATION "$<TARGET_FILE:qtermwidget_external>"
+    IMPORTED_LOCATION ${QTERMWIDGET_LIB}
     INSTALL_NAME_DIR ${LIBQTW_INSTALL_RPATH}
 )
 if(APPLE)
