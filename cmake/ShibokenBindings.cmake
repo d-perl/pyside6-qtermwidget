@@ -170,7 +170,6 @@ if(APPLE)
     file(GLOB PYSIDE_LIBS
         "${PYSIDE_PYTHON_DIR}/libpyside6*.dylib"
     )
-    set(LIBQTW_IMPORTED_SONAME "@rpath/libqtermwidget6.2.dylib")
 else()
     set_target_properties(pyside6_qtermwidget PROPERTIES
         PREFIX ""
@@ -193,10 +192,11 @@ message(STATUS "Using PySide libs: ${PYSIDE_LIBS}")
 add_library(qtermwidget6 SHARED IMPORTED)
 set_target_properties(qtermwidget6 PROPERTIES
     IMPORTED_LOCATION ${QTERMWIDGET_LIB}
+    INSTALL_NAME_DIR ${LIBQTW_INSTALL_RPATH}
 )
 if(APPLE)
     set_target_properties(qtermwidget6 PROPERTIES
-        IMPORTED_SONAME "@rpath/${QTERMWIDGET_LIB}"
+        IMPORTED_SONAME "@rpath/libqtermwidget6.2.dylib"
     )
 endif()
 add_dependencies(qtermwidget6 qtermwidget_external)
