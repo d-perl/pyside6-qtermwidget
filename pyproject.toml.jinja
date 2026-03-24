@@ -43,11 +43,11 @@ linux.before-build = [
     "dnf install -y tree libstdc++-devel mesa-libGL libxslt libxslt-devel libxkbcommon-devel clang clang-devel",
 ]
 macos.before-build = [
-    "brew install cmake llvm tree"
+    "brew install cmake llvm tree" "python -m site --user-site)"
 ]
 linux.repair-wheel-command = ""
 macos.repair-wheel-command = ""
-before-test = ["pip install pytest", "tree -L 3 $(python -m site --user-site)"]
+before-test = ["pip install pytest"]
 test-command = [
   "pytest {project}/tests",
 ]
