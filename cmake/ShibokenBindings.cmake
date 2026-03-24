@@ -170,6 +170,7 @@ if(APPLE)
     file(GLOB PYSIDE_LIBS
         "${PYSIDE_PYTHON_DIR}/libpyside6*.dylib"
     )
+    set(LIBQTW_IMPORTED_SONAME "@rpath/libqtermwidget6.2.dylib")
 else()
     set_target_properties(pyside6_qtermwidget PROPERTIES
         PREFIX ""
@@ -189,10 +190,15 @@ message(STATUS "Using Shiboken lib: ${SHIBOKEN_LIBS}")
 message(STATUS "Using PySide libs: ${PYSIDE_LIBS}")
 
 # Create imported target for qtermwidget library
-add_library(qtermwidget6 STATIC IMPORTED)
+add_library(qtermwidget6 SHARED IMPORTED)
 set_target_properties(qtermwidget6 PROPERTIES
     IMPORTED_LOCATION ${QTERMWIDGET_LIB}
 )
+if(APPLE)
+    set_target_properties(qtermwidget6 PROPERTIES
+        IMPORTED_SONAME "@rpath/${QTERMWIDGET_LIB}"
+    )
+endif()
 add_dependencies(qtermwidget6 qtermwidget_external)
 
 target_link_libraries(pyside6_qtermwidget
