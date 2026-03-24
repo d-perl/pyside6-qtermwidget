@@ -162,6 +162,7 @@ if(APPLE)
         OUTPUT_NAME "pyside6_qtermwidget"
         INSTALL_RPATH "@loader_path:@loader_path/lib:@loader_path/../PySide6/:@loader_path/../PySide6/Qt/lib:@loader_path/../shiboken6"
     )
+    set(MACOSX_RPATH TRUE)
     file(GLOB SHIBOKEN_DYLIBS
         "${SHIBOKEN_PYTHON_DIR}/libshiboken6*.dylib"
     )
