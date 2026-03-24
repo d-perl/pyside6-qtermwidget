@@ -47,8 +47,9 @@ macos.before-build = [
 ]
 linux.repair-wheel-command = ""
 macos.repair-wheel-command = ""
-before-test = ["pip install pytest", "tree -L 3 $(python -c \"import sysconfig; print(sysconfig.get_path('purelib'))\")"]
+before-test = ["pip install pytest"]
 test-command = [
+  "tree -L 3 $(python -c \"import sysconfig; print(sysconfig.get_path('purelib'))\")",
   "pytest {project}/tests",
 ]
 
