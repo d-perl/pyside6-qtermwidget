@@ -47,6 +47,10 @@ macos.before-build = [
 ]
 linux.repair-wheel-command = ""
 macos.repair-wheel-command = ""
+before-test = "pip install pytest"
+test-command = [
+  "pytest {project}/tests",
+]
 
 [tool.cibuildwheel.linux.environment]
 Qt6_DIR = "/host$CIBUILDWHEEL_WORKSPACE/Qt/{{ QT_VERSION }}/gcc_64"
