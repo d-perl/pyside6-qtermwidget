@@ -49,7 +49,7 @@ linux.repair-wheel-command = ""
 macos.repair-wheel-command = ""
 before-test = ["pip install pytest"]
 test-command = [
-  "tree -L 4 $(python -c \"import sysconfig; print(sysconfig.get_path('purelib'))\")/PySide6",
+  "tree -L 4 $(python -c \"import sysconfig; print(sysconfig.get_path('purelib'))\")/PySide6/Qt/lib",
 #  "pytest {project}/tests",
 ]
 
